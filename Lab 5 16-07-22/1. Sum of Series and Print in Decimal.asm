@@ -7,7 +7,10 @@ Title: Store and print  the sum of 1 + 3 + 5 + ... + 21 in BX
     MSG DB 'SUM OF THE SERIES IS: $'
             
 .CODE
-MAIN PROC 
+MAIN PROC
+    MOV AX,@DATA
+    MOV DS,AX
+     
         
     CALL SUMMATION
     CALL DIVITION
@@ -19,45 +22,50 @@ MAIN PROC
     MAIN ENDP
 
 SUMMATION PROC
-    MOV AL,1
-    MOV BL,AL
+    MOV AX,1
+    MOV BX,AX
     
     S_LOOP:
-        ADD AL,2
-        CMP AL,23
+        ADD AX,2
+        CMP AX,23
         JE S_CLOSE
-        ADD BL,AL
+        ADD BX,AX
         JMP S_LOOP
         
     S_CLOSE:
-        MOV AL,BL
+        MOV AX,BX
         RET        
     
 SUMMATION ENDP
 
 
 DIVITION PROC
-    POP BX
-    MOV AH,10D
-    MOV CX,0H
+    POP CX
+    MOV BX,10D
         
     D_LOOP:
-        XOR DL,DL
-        CMP AL,0
+        XOR DX,DX
+        CMP AX,0
         JE D_CLOSE
-        DIV AH
+        DIV BX
         PUSH DX
-        INC CX
+        INC VAR
         JMP D_LOOP
         
     D_CLOSE:
-        PUSH BX
+        PUSH CX
+        MOV CX,VAR
         RET
 
 DIVITION ENDP
 
 PRINT PROC
-    POP BX
+    POP BX 
+    
+    MOV AH,9
+    LEA DX,MSG
+    INT 21H
+    
     P_LOOP:
         POP DX
         ADD DX,30H
